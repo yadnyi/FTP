@@ -3,6 +3,7 @@
 import socket
 import sys
 
+
 #TODO
 '''
 get port from user (with checking input)
@@ -37,7 +38,7 @@ def initialize_port(port_id) :
 			#The SOCK_STREAM means connection oriented TCP protocol.
 		ftp_socket.bind(('', port_id)) #binds the ip and port to socket
 		ftp_socket.listen(1)
-		print("Server is initialized , Listening to port ", port)
+		print('Server is initialized and Listening to port', port)
 		return ftp_socket
 	except socket.error as e :
 		print("Socket Error ", e)
@@ -45,6 +46,66 @@ def initialize_port(port_id) :
 	except IOError as e :
 		print("IOError :" , e)
 		sys.exit()
+
+def listen_from_client(ftp_socket):
+	#ftp_client is a new socket object usable to send and receive data on the connection,
+	#and address is the address bound to the socket on the other end of the connection.
+		'''listen for client connection'''
+	while True :
+		ftp_client, address = ftp_socket.accept()
+		print("Accepted connection From ", address)
+		#Now if we comsider multiple clients we  will create a client class
+		shi = ClientInterface(ftp_client, ftp_socket, address)
+
+		while True :
+			#write code about the I/O to client ans server
+			try :
+				client_request = ftp_client.recv(const.BUFFER_SIZE)
+				client_request = client_request.decode()
+
+				if client_request == '' :
+					#print("Yadnyi")
+					continue
+				print(	address , " : ", client_request)
+
+				#print(type(client_request))
+				client_command = client_request.split(" ")[0]
+				#print(client_command)
+			except socket.error as e :
+				print("Client Disconnected or : ", e)
+				break
+
+			#check for correct commands
+			if client_command in const.ACCEPTED_COMMANDS :
+				if client_command == const.LS :
+					#call LS function
+					shi.ls()
+				'''if client_command == const.GET :
+					#call GET function
+				if client_command == const.PUT :
+					#call PUT function
+					'''
+				if client_command == const.CD :
+					#call CD function
+					#print("Yadnyi")
+					shi.cd(client_request)
+
+				if client_command == const.MKDIR :
+					#call MKDIR function'''
+					shi.mkdir(client_request)
+				if client_command == const.CWD :
+
+					shi.cwd()
+
+				if client_command == const.GET :
+					shi.get(client_request)
+
+				if client_command == const.PUT :
+					shi.put(client_request)
+
+
+
+
 
 
 
