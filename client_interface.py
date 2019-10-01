@@ -53,6 +53,15 @@ class ftp_client(Cmd):
 		filename = args.split("/")[-1]
 		self.send_file(filename, args)
 
+	def do_mget(self, args) :
+		#command = const.MGET + " " + args
+		#command = command.encode()
+		#self.ftp_socket.send(command)
+		self.receive_multiple_files(args)
+
+	def do_mput(self, args) :
+		self.send_multiple_files(args)
+
 	def do_clear(self, args):
 		system("clear")
 		return
@@ -219,6 +228,38 @@ class ftp_client(Cmd):
 			header = "0" + header
 
 		return header
+
+	def receive_multiple_files(self, args) :
+		if len(args) < 1 :
+			print("help")
+
+		filenames = args.split(' ')
+		if len(filenames) < 1 :
+			print("help")
+			return
+
+		for i in range(len(filenames)) :
+			command = const.GET + " " + filenames[i]
+			command = command.encode()
+			self.ftp_socket.send(command)
+			#wait for receiving file
+			self.receive_file()
+
+	def send_multiple_files(self, args) :
+		if len(args) < 1 :
+			print("help")
+		filenames = args.split(' ')
+		if len(filenames) < 1 :
+			print(help)
+
+		for i in range(len(filenames)) :
+			file = filenames[i]
+			command = const.PUT + " " + file
+			command = command.encode()
+			self.ftp_socket.send(command)
+			filename = file.split("/")[-1]
+			self.send_file(filename, file)
+
 
     ######## Describesthe commands ##########
 	def help_get(self):

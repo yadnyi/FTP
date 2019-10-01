@@ -84,7 +84,7 @@ def listen_from_client(ftp_socket) :
 					'''
 				if client_command == const.CD :
 					#call CD function
-					#print("Aashish")
+					#print("Yadnyi")
 					shi.cd(client_request)
 
 				if client_command == const.MKDIR :
@@ -99,6 +99,12 @@ def listen_from_client(ftp_socket) :
 
 				if client_command == const.PUT :
 					shi.put(client_request)
+
+				if client_command == const.CLEAR :
+					shi.clear(client_request)
+
+				if client_command == const.QUIT :
+					shi.quit()
 
 
 
